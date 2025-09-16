@@ -7,7 +7,7 @@ This project is **under active development**. Features, APIs, and project struct
 
 ## Overview
 
-PulseNet.Microservices is a modular IoT framework built on .NET 8. It implements device telemetry ingestion, command processing, and secure JWT-based authentication.  
+PulseNet.Microservices is a modular IoT framework built on .NET 9. It implements device telemetry ingestion, command processing, and secure JWT-based authentication.  
 It extends the IoT Starter blueprint with deterministic testing capabilities, DeviceWorkers, and end-to-end telemetry/command flows.
 
 ## Architecture Overview
