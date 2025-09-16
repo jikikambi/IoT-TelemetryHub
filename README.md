@@ -17,7 +17,7 @@ It extends the IoT Starter blueprint with deterministic testing capabilities, De
                │   DeviceWorker   │
                │ (IoT.DeviceApp)  │
                └─────────┬────────┘
-                   Telemetry
+                     Telemetry
                          │
                          ▼
                ┌──────────────────┐
