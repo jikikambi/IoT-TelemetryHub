@@ -1,0 +1,51 @@
+syntax = "proto3";
+option csharp_namespace = "IoT.Contracts";
+
+package device;
+
+service DeviceGateway {
+    // Authenticate device and return JWT
+    rpc ConnectDevice(DeviceConnectRequest) returns (DeviceConnectResponse);
+	
+	// Stream telemetry from device; JWT enforced
+	rpc StreamTelemetry(stream Telemetry) returns (stream TelemetryAck);
+	
+	//rpc SendTelemetry(stream Telemetry) returns (Ack);
+	
+	// Server can send commands to device
+	rpc ReceiveCommands(DeviceIdentity) returns (stream DeviceCommand);
+}
+
+message DeviceIdentity {
+	string deviceId = 1;
+}
+
+message Telemetry {
+	string deviceId = 1;
+	string type = 2;
+	string isoTimestamp = 3;
+	string payloadJson = 4;
+}
+
+message TelemetryAck {
+  string message = 1;
+  bool success = 2;
+}
+
+message DeviceCommand {
+	string commandId = 1;
+	string name = 2;
+	string payloadJson = 3;
+}
+
+message Ack { bool ok = 1; string message = 2;}
+
+message DeviceConnectRequest {
+  string deviceId = 1;
+  string certificate = 2; // base64 or PEM
+}
+
+message DeviceConnectResponse {
+  string jwtToken = 1;
+  string message = 2;
+}

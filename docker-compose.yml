@@ -1,0 +1,273 @@
+﻿networks:
+  iot-net:
+    driver: bridge
+
+volumes:
+  device-certs:
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - iot-net
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      retries: 5
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      SA_PASSWORD: "Pa55W0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - iot-net
+
+  gateway:
+    build:
+      context: .
+      dockerfile: IoT.Gateway/Dockerfile
+      target: runtime
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      sqlserver:
+        condition: service_healthy
+    environment:
+      - Rabbit__Uri=amqp://guest:guest@rabbitmq:5672/
+      - ASPNETCORE_URLS=http://+:80
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - ConnectionStrings__TelemetryDb=Server=sqlserver;Database=Telemetry;User Id=sa;Password=Pa55W0rd;
+      - KestrelSettings__CertPath=/app/Certs/gateway.pfx
+      - KestrelSettings__CertPassword=Pa55W0rd
+      - KestrelSettings__CertAuthority=/app/Certs/ca.crt
+      - Jwt__Secret=A8d#7kLp2!u9TzXwQ1vR3yB6eF4sH0Gj
+    volumes:
+      - ./IoT.Gateway/Certs:/app/Certs:ro
+    ports:
+      - "7019:80"
+    restart: always
+    networks:
+      - iot-net
+
+  deviceapi:
+    build:
+      context: .
+      dockerfile: IoT.DeviceApi/Dockerfile
+      target: runtime
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      sqlserver:
+        condition: service_healthy
+    environment:
+      - Rabbit__Uri=amqp://guest:guest@rabbitmq:5672/
+      - ASPNETCORE_URLS=http://+:80
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - ConnectionStrings__TelemetryDb=Server=sqlserver;Database=Telemetry;User Id=sa;Password=Pa55W0rd;
+    ports:
+      - "8080:80"
+    restart: always
+    networks:
+      - iot-net
+
+  ingestor:
+    build:
+      context: .
+      dockerfile: IoT.TelemetryIngestor/Dockerfile
+      target: runtime
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      sqlserver:
+        condition: service_healthy
+    environment:
+      - Rabbit__Uri=amqp://guest:guest@rabbitmq:5672/
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - ConnectionStrings__TelemetryDb=Server=sqlserver;Database=Telemetry;User Id=sa;Password=Pa55W0rd;
+    restart: always
+    networks:
+      - iot-net
+
+  cert-init:
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    container_name: cert-init
+    working_dir: /app
+    volumes:
+      - ./IoT.DeviceApp/Certs:/app/Certs:rw
+      - ./cert-init.ps1:/app/cert-init.ps1:ro
+    entrypoint: ["pwsh", "/app/cert-init.ps1"]
+    restart: "no"
+    networks:
+      - iot-net
+
+  deviceapp:
+    build:
+      context: .
+      dockerfile: IoT.DeviceApp/Dockerfile
+      target: runtime
+    depends_on:
+      cert-init:
+        condition: service_completed_successfully
+      gateway:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - Rabbit__Uri=amqp://guest:guest@rabbitmq:5672/
+      - DOTNET_RUNNING_IN_CONTAINER=true
+      - DeviceAppSettings__DeviceId=device-001
+      - DeviceAppSettings__CertPath=/app/Certs/device-001-fixed.crt
+      - DeviceAppSettings__CertPassword=Pa55W0rd
+      - DeviceAppSettings__GatewayUri=http://gateway:80
+      - DeviceAppSettings__TelemetryType=temperature
+    volumes:
+      - ./IoT.DeviceApp/Certs:/app/Certs:ro
+    ports:
+      - "8090:80"
+    restart: always
+    networks:
+      - iot-net
+
+
+# networks:
+#   iot-net:
+#     driver: bridge
+
+# services:
+#   rabbitmq:
+#     image: rabbitmq:3-management
+#     container_name: rabbitmq
+#     ports:
+#       - "5672:5672"
+#       - "15672:15672"
+#     environment:
+#       RABBITMQ_DEFAULT_USER: guest
+#       RABBITMQ_DEFAULT_PASS: guest
+#     networks:
+#       - iot-net
+#     healthcheck:
+#       test: ["CMD", "rabbitmqctl", "status"]
+#       interval: 10s
+#       retries: 5
+
+#   sqlserver:
+#     image: mcr.microsoft.com/mssql/server:2022-latest
+#     container_name: sqlserver
+#     environment:
+#       SA_PASSWORD: "Pa55W0rd"
+#       ACCEPT_EULA: "Y"
+#     ports:
+#       - "1433:1433"
+#     networks:
+#       - iot-net
+#     # healthcheck:
+#     #   test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Pa55W0rd", "-Q", "SELECT 1"]
+#     #   interval: 10s
+#     #   retries: 20
+#     #   timeout: 10s
+#     #   start_period: 20s
+
+#   gateway:
+#     build:
+#       context: .
+#       dockerfile: IoT.Gateway/Dockerfile
+#       target: runtime
+#     depends_on:
+#       rabbitmq:
+#         condition: service_healthy
+#       sqlserver:
+#         condition: service_healthy
+#     environment:
+#       - Rabbit__Uri=amqp://guest:guest@rabbitmq:5672/
+#       - ASPNETCORE_URLS=http://+:80
+#       - DOTNET_RUNNING_IN_CONTAINER=true
+#       - ConnectionStrings__TelemetryDb=Server=sqlserver;Database=Telemetry;User Id=sa;Password=Pa55W0rd;
+#       - KestrelSettings__CertPath=/app/Certs/gateway.pfx
+#       - KestrelSettings__CertPassword=Pa55W0rd
+#       - KestrelSettings__CertAuthority=/app/Certs/ca.crt
+#       - Jwt__Secret=A8d#7kLp2!u9TzXwQ1vR3yB6eF4sH0Gj
+#     volumes:
+#      # Always mount LF-normalized files from host
+#       - ./IoT.Gateway/Certs:/app/Certs:ro
+#     ports:
+#       - "7019:80"
+#     restart: always
+#     networks:
+#       - iot-net
+
+#   deviceapi:
+#     build:
+#       context: .
+#       dockerfile: IoT.DeviceApi/Dockerfile
+#       target: runtime
+#     depends_on:
+#       rabbitmq:
+#         condition: service_healthy
+#       sqlserver:
+#         condition: service_healthy
+#     environment:
+#       - Rabbit__Uri=amqp://guest:guest@rabbitmq:5672/
+#       - ASPNETCORE_URLS=http://+:80
+#       - DOTNET_RUNNING_IN_CONTAINER=true
+#       - ConnectionStrings__TelemetryDb=Server=sqlserver;Database=Telemetry;User Id=sa;Password=Pa55W0rd;
+#     ports:
+#       - "8080:80"
+#     restart: always
+#     networks:
+#       - iot-net
+
+#   ingestor:
+#     build:
+#       context: .
+#       dockerfile: IoT.TelemetryIngestor/Dockerfile
+#       target: runtime
+#     depends_on:
+#       rabbitmq:
+#         condition: service_healthy
+#       sqlserver:
+#         condition: service_healthy
+#     environment:
+#       - Rabbit__Uri=amqp://guest:guest@rabbitmq:5672/
+#       - DOTNET_RUNNING_IN_CONTAINER=true
+#       - ConnectionStrings__TelemetryDb=Server=sqlserver;Database=Telemetry;User Id=sa;Password=Pa55W0rd;
+#     restart: always
+#     networks:
+#       - iot-net
+
+#   deviceapp:
+#     build:
+#       context: .
+#       dockerfile: IoT.DeviceApp/Dockerfile
+#       target: runtime
+#     depends_on:
+#       gateway:
+#         condition: service_healthy
+#       rabbitmq:
+#         condition: service_healthy
+#     environment:
+#       - Rabbit__Uri=amqp://guest:guest@rabbitmq:5672/
+#       - DOTNET_RUNNING_IN_CONTAINER=true
+#       - DeviceAppSettings__DeviceId=device-001
+#       # Use LF-normalized file mounted inside container
+#       - DeviceAppSettings__CertPath=/app/Certs/device-001.crt
+#       - DeviceAppSettings__CertPassword=Pa55W0rd
+#       - DeviceAppSettings__GatewayUri=http://gateway:80
+#       - DeviceAppSettings__TelemetryType=temperature
+#     volumes:
+#       - ./IoT.DeviceApp/Certs:/app/Certs:ro
+#     ports:
+#       - "8090:80"   
+#     restart: always
+#     networks:
+#       - iot-net

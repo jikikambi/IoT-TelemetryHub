@@ -1,0 +1,90 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoT.DeviceApi", "IoT.DeviceApi\IoT.DeviceApi.csproj", "{B4E49CCE-25E5-48DE-A8B0-AD423800A605}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoT.Shared", "IoT.Shared\IoT.Shared.csproj", "{6C821E26-812D-463B-AB12-33F5112FDE87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoT.TelemetryIngestor", "IoT.TelemetryIngestor\IoT.TelemetryIngestor.csproj", "{A6BC211B-2B24-4205-AA3A-5CC369125CF5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoT.Gateway", "IoT.Gateway\IoT.Gateway.csproj", "{D261712A-4D7E-4322-AB7C-3AB1558452E3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		Dev.md = Dev.md
+		docker-compose.yml = docker-compose.yml
+		Dockerfile.build = Dockerfile.build
+		gen-certs.ps1 = gen-certs.ps1
+		README.md = README.md
+		TroubleShooting.md = TroubleShooting.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoT.DeviceApp", "IoT.DeviceApp\IoT.DeviceApp.csproj", "{5EB9C301-6A6B-4412-9F02-07C26BFCAD5F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoT.Contracts", "IoT.Contracts\IoT.Contracts.csproj", "{E392ED56-9F1A-48CB-9953-F371E504CF2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoT.Telemetry.Persistence", "IoT.Telemetry.Persistence\IoT.Telemetry.Persistence.csproj", "{D05671F9-4783-4A9A-B2FC-60787A08B0D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoT.Shared.UnitTests", "IoT.Shared.UnitTests\IoT.Shared.UnitTests.csproj", "{38054171-7146-4F66-A854-C6C376D8F999}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoT.DeviceApp.UnitTests", "IoT.DeviceApp.UnitTests\IoT.DeviceApp.UnitTests.csproj", "{8514B28B-669F-4271-B1E8-B2B7D304CF44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IoT.DeviceApp.IntegrationTests", "IoT.DeviceApp.IntegrationTests\IoT.DeviceApp.IntegrationTests.csproj", "{295FF865-6468-407C-9FD4-FA11F23A6664}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B4E49CCE-25E5-48DE-A8B0-AD423800A605}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4E49CCE-25E5-48DE-A8B0-AD423800A605}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4E49CCE-25E5-48DE-A8B0-AD423800A605}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4E49CCE-25E5-48DE-A8B0-AD423800A605}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C821E26-812D-463B-AB12-33F5112FDE87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C821E26-812D-463B-AB12-33F5112FDE87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C821E26-812D-463B-AB12-33F5112FDE87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C821E26-812D-463B-AB12-33F5112FDE87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6BC211B-2B24-4205-AA3A-5CC369125CF5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6BC211B-2B24-4205-AA3A-5CC369125CF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6BC211B-2B24-4205-AA3A-5CC369125CF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6BC211B-2B24-4205-AA3A-5CC369125CF5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D261712A-4D7E-4322-AB7C-3AB1558452E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D261712A-4D7E-4322-AB7C-3AB1558452E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D261712A-4D7E-4322-AB7C-3AB1558452E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D261712A-4D7E-4322-AB7C-3AB1558452E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EB9C301-6A6B-4412-9F02-07C26BFCAD5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EB9C301-6A6B-4412-9F02-07C26BFCAD5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EB9C301-6A6B-4412-9F02-07C26BFCAD5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EB9C301-6A6B-4412-9F02-07C26BFCAD5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E392ED56-9F1A-48CB-9953-F371E504CF2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E392ED56-9F1A-48CB-9953-F371E504CF2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E392ED56-9F1A-48CB-9953-F371E504CF2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E392ED56-9F1A-48CB-9953-F371E504CF2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D05671F9-4783-4A9A-B2FC-60787A08B0D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D05671F9-4783-4A9A-B2FC-60787A08B0D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D05671F9-4783-4A9A-B2FC-60787A08B0D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D05671F9-4783-4A9A-B2FC-60787A08B0D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38054171-7146-4F66-A854-C6C376D8F999}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38054171-7146-4F66-A854-C6C376D8F999}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38054171-7146-4F66-A854-C6C376D8F999}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38054171-7146-4F66-A854-C6C376D8F999}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8514B28B-669F-4271-B1E8-B2B7D304CF44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8514B28B-669F-4271-B1E8-B2B7D304CF44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8514B28B-669F-4271-B1E8-B2B7D304CF44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8514B28B-669F-4271-B1E8-B2B7D304CF44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{295FF865-6468-407C-9FD4-FA11F23A6664}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{295FF865-6468-407C-9FD4-FA11F23A6664}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{295FF865-6468-407C-9FD4-FA11F23A6664}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{295FF865-6468-407C-9FD4-FA11F23A6664}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F5F042FB-E919-4021-91F9-888293F33CC4}
+	EndGlobalSection
+EndGlobal

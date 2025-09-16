@@ -1,0 +1,118 @@
+# ===============================
+# Visual Studio / .NET files
+# ===============================
+
+## User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Auto-generated files
+*.ide
+*.cache
+*.vspscc
+*.vssscc
+*.DotSettings.user
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+bin/
+obj/
+TestResults/
+*.dll
+*.exe
+*.pdb
+*.app
+
+## Rider
+.idea/
+
+## ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+## Visual Studio Code
+.vscode/
+
+# ===============================
+# .NET Core / .NET 8
+# ===============================
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ===============================
+# NuGet
+# ===============================
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+*.nuspec
+
+# ===============================
+# Docker
+# ===============================
+**/docker-compose.override.yml
+**/docker-compose.override.yaml
+**/Dockerfile*
+**/docker-compose.*.yml
+**/docker-compose.*.yaml
+**/.docker/
+
+# ===============================
+# Test results
+# ===============================
+*.trx
+*.coverage
+*.coveragexml
+*.testresults
+*.vsmdi
+
+# ===============================
+# Logs
+# ===============================
+*.log
+logs/
+DebugLogs/
+
+# ===============================
+# Markdown files
+# ===============================
+# Ignore all markdown files
+*.md
+
+# But do not ignore README.md
+!README.md
+
+# ===============================
+# OS-specific files
+# ===============================
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+.nfs*
+
+# ===============================
+# Others
+# ===============================
+*.swp
+*.bak
+*.tmp
+*.orig
+*.rej
