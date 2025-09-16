@@ -13,39 +13,31 @@ It extends the IoT Starter blueprint with deterministic testing capabilities, De
 ## Architecture Overview
 
 ```
-    ┌──────────────┐
-    │ DeviceWorker │
-    │ (IoT.DeviceApp)│
-    └──────┬───────┘
-   Telemetry │   ▲ Commands
-             │   │
-             ▼   │
-    ┌──────────────┐
-    │ IoT.Gateway  │
-    │  gRPC Server │
-    └──────┬───────┘
-           │ Publish Telemetry
-           ▼
-    ┌──────────────┐
-    │  RabbitMQ    │
-    └──────┬───────┘
-   Telemetry │ Commands
-             ▼
-    ┌──────────────┐
-    │TelemetryIngestor│
-    │ (Background Worker) │
-    └──────────────┘
-
-    ┌──────────────┐
-    │  IoT.DeviceApi │
-    │   REST API     │
-    └──────┘
-      │ Sends Commands
-      ▼
-    ┌──────────────┐
-    │  RabbitMQ    │
-    └──────────────┘
-```
+               ┌──────────────────┐
+               │   DeviceWorker   │
+               │ (IoT.DeviceApp)  │
+               └─────────┬────────┘
+                   Telemetry
+                         │
+                         ▼
+               ┌──────────────────┐
+               │   IoT.Gateway    │
+               │   gRPC Server    │
+               └─────────┬────────┘
+                         │ Publishes Telemetry
+                         ▼
+               ┌─────────────────┐
+               │     RabbitMQ    │
+               └─────────────────┘
+                   ▲          │      
+         Commands  │          │  Telemetry
+                   │          ▼
+     ┌──────────────────┐   ┌─────────────────────┐
+     │  IoT.DeviceApi   │   │  TelemetryIngestor  │
+     │    REST API      │   │ (Background Worker) │
+     └─────────┬────────┘   └──────────┬──────────┘
+               │ Sends Commands        │ Consumes Telemetry
+               └───────────────────────┘
 
 ```
 
@@ -53,18 +45,16 @@ It extends the IoT Starter blueprint with deterministic testing capabilities, De
 - Commands: DeviceApi → RabbitMQ → DeviceWorker  
 - `IoT.Shared` contains shared DTOs, messaging helpers, and gRPC contracts.
 
----
-
 ## Microservice Interaction Table
 
-| Service | Interacts With | Notes |
-|---------|----------------|-------|
-| DeviceWorker (IoT.DeviceApp) | IoT.Gateway, RabbitMQ | Streams telemetry and receives commands |
-| IoT.Gateway | RabbitMQ | Publishes telemetry for ingestion |
-| IoT.DeviceApi | RabbitMQ | Sends commands to devices |
-| TelemetryIngestor | RabbitMQ, IoT.Telemetry.Persistence | Consumes telemetry messages and persists/logs them |
-| IoT.Shared | All services | Contains shared DTOs, messaging helpers, and gRPC contracts |
-| IoT.Telemetry.Persistence | TelemetryIngestor | Optional database persistence layer |
+| Service                      | Interacts With                                              | Notes                                              |
+|------------------------------|-------------------------------------------------------------|----------------------------------------------------|
+| DeviceWorker (IoT.DeviceApp) | IoT.Gateway, RabbitMQ                                       | Streams telemetry and receives commands            |
+| IoT.Gateway                  | RabbitMQ                                                    | Publishes telemetry for ingestion                  |
+| IoT.DeviceApi                | RabbitMQ                                                    | Sends commands to devices                          |
+| TelemetryIngestor            | RabbitMQ, IoT.Telemetry.Persistence                         | Consumes telemetry messages and persists/logs them |
+| IoT.Shared | All services    | Contains shared DTOs, messaging helpers, and gRPC contracts |                                                    |
+| IoT.Telemetry.Persistence    | TelemetryIngestor                                           | Optional database persistence layer                |
 
 ---
 
@@ -74,11 +64,11 @@ It extends the IoT Starter blueprint with deterministic testing capabilities, De
 
 PulseNet.Microservices.sln
 │
-├── IoT.Contracts                  # Shared contracts and DTOs used across services (✅ Implemented)
-├── IoT.DeviceApi                  # REST API to send commands to devices (⚠️ Partially implemented)
-├── IoT.DeviceApp                  # DeviceWorker: streams telemetry, receives commands, manages JWT (✅ Implemented)
-├── IoT.DeviceApp.UnitTests        # Unit tests for DeviceWorker, JWT refresh, telemetry/command handling (✅ Implemented)
-├── IoT.DeviceApp.IntegrationTests # Integration tests with FakeDeviceGatewayClient for deterministic behavior (✅ Implemented)
+├── IoT.Contracts                   # Shared contracts and DTOs used across services (✅ Implemented)
+├── IoT.DeviceApi                   # REST API to send commands to devices (⚠️ Partially implemented)
+├── IoT.DeviceApp                   # DeviceWorker: streams telemetry, receives commands, manages JWT (✅ Implemented)
+├── IoT.DeviceApp.UnitTests         # Unit tests for DeviceWorker, JWT refresh, telemetry/command handling (✅ Implemented)
+├── IoT.DeviceApp.IntegrationTests  # Integration tests with FakeDeviceGatewayClient for deterministic behavior (✅ Implemented)
 ├── IoT.Gateway                     # gRPC Device Gateway: receives telemetry from devices and publishes to messaging (⚠️ Partially implemented)
 ├── IoT.Shared                      # Shared libraries: messaging helpers, DTOs, proto-generated classes (✅ Implemented)
 ├── IoT.Shared.UnitTests            # Unit tests for shared libraries (✅ Implemented)
@@ -86,9 +76,6 @@ PulseNet.Microservices.sln
 └── IoT.TelemetryIngestor           # Background worker consuming telemetry messages and logging them (⚠️ Partially implemented)
 
 ````
-
----
-
 ## Work Implemented So Far (with Status)
 
 ### 1. **IoT.DeviceApp** ✅ Implemented
@@ -133,26 +120,22 @@ PulseNet.Microservices.sln
 ### 10. **IoT.Contracts** ✅ Implemented
 - Shared contracts and DTOs for consistent messaging and telemetry schemas.
 
----
-
 ## Features
 
-| Feature | Status |
-|---------|--------|
-| Device telemetry ingestion via gRPC | ✅ Fully implemented |
-| Command delivery via REST + RabbitMQ | ⚠️ Partially implemented |
-| JWT authentication with automatic refresh | ✅ Fully implemented |
-| Deterministic unit and integration testing | ✅ Fully implemented |
-| Telemetry persistence and logging | ⚠️ Partially implemented |
-| Modular microservice architecture | ✅ Implemented |
-
----
+| Feature                                     | Status                       |
+|---------------------------------------------|------------------------------|
+| Device telemetry ingestion via gRPC         | ✅ Fully implemented        |
+| Command delivery via REST + RabbitMQ        | ⚠️ Partially implemented    |
+| JWT authentication with automatic refresh   | ✅ Fully implemented        |
+| Deterministic unit and integration testing  | ✅ Fully implemented        |
+| Telemetry persistence and logging           | ⚠️ Partially implemented    |
+| Modular microservice architecture           | ✅ Implemented              |
 
 ## Getting Started
 
 ### Prerequisites
 
-- .NET 8 SDK
+- .NET 9 SDK
 - Docker (for RabbitMQ)
 - IDE: Visual Studio / Rider / VSCode
 
