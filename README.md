@@ -1,7 +1,6 @@
 ﻿# `README.md` for PulseNet.Microservices
 
-```markdown
-# PulseNet.Microservices - IoT Platform (.NET 8, gRPC + REST + RabbitMQ)
+# PulseNet.Microservices - IoT Platform (.NET 9, gRPC + REST + RabbitMQ)
 
 ⚠️ **Warning – Work in Progress**  
 This project is **under active development**. Features, APIs, and project structure may change. Some functionality is only partially implemented. Please consider the current implementation **not final**.
@@ -11,11 +10,7 @@ This project is **under active development**. Features, APIs, and project struct
 PulseNet.Microservices is a modular IoT framework built on .NET 8. It implements device telemetry ingestion, command processing, and secure JWT-based authentication.  
 It extends the IoT Starter blueprint with deterministic testing capabilities, DeviceWorkers, and end-to-end telemetry/command flows.
 
----
-
 ## Architecture Overview
-
-```
 
 ```
     ┌──────────────┐
