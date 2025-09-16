@@ -143,8 +143,8 @@ PulseNet.Microservices.sln
 
 ```bash
 # Clone repo
-git clone https://github.com/your-org/PulseNet.Microservices.git
-cd PulseNet.Microservices
+git clone  https://github.com/jikikambi/IoT-TelemetryHub.git
+cd IoT-TelemetryHub
 
 # Restore and build
 dotnet restore
